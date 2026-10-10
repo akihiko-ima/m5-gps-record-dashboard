@@ -1,0 +1,15 @@
+.vscode/*
+!.vscode/extensions.json
+node_modules/
+
+# environment files
+.env
+
+# Steering files (task management - temporary)
+.steering/*
+!.steering/.gitkeep
+
+.claude/settings.local.json
+
+# patch files
+*.patch
