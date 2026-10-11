@@ -30,6 +30,7 @@ web/
 │   ├── components/           # 画面部品（ui/ は shadcn/ui、map/ は地図と再生）
 │   ├── lib/                  # フレームワークに依存しない処理（CSV 解析・GeoJSON 変換・距離・表示形式・再生の時刻計算）
 │   └── server/               # サーバー専用（DB・ファイル保存・track-service）
+├── Dockerfile                # 本番イメージ（リポジトリ直下の compose.yaml から使う）
 ├── drizzle/                  # マイグレーション（起動時に自動適用）
 ├── scripts/                  # ダミーデータ生成・スクリーンショット撮影
 ├── demo/                     # ダミー CSV（架空のルート）

@@ -1,0 +1,23 @@
+# Web ダッシュボード: docker compose up -d → http://localhost:3000
+# 設定は .env（.env.example を参照）で変更できる
+services:
+  web:
+    build:
+      context: ./web
+      args:
+        # 地図タイルの URL はビルド時に埋め込まれる（変更したら docker compose up -d --build）
+        NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-https://tile.openstreetmap.org/{z}/{x}/{y}.png}
+    image: m5-gps-dashboard-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    volumes:
+      # SQLite・アップロードした CSV・変換済み GeoJSON。バックアップはこのディレクトリをコピーする
+      # コンテナは uid 1000（node ユーザー）で動くため、ホスト側も uid 1000 が書き込めること
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3

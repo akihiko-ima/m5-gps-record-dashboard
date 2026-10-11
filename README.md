@@ -47,7 +47,34 @@ cp .env.example .env   # 必要に応じて編集
 npm run dev            # 開発サーバー: http://localhost:3000
 ```
 
-### 自宅サーバーでの本番運用
+### 自宅サーバーでの本番運用（Docker Compose）
+
+リポジトリ直下で実行する。初回はイメージのビルドも行われる（ビルドにはネット接続が必要）。
+
+```bash
+cp .env.example .env    # 任意: ポートやタイル URL を変える場合
+docker compose up -d    # http://<サーバー>:3000
+```
+
+| 操作                         | コマンド                               |
+| ---------------------------- | -------------------------------------- |
+| 状態の確認（healthy になる） | `docker compose ps`                    |
+| ログの確認                   | `docker compose logs -f web`           |
+| 更新（git pull の後など）    | `docker compose up -d --build`         |
+| 停止                         | `docker compose down`                  |
+
+- データ（SQLite・アップロードした CSV・変換済み GeoJSON）はリポジトリ直下の `./data` に保存される（Git 管理外）。コンテナを作り直しても消えず、バックアップはこのディレクトリをコピーするだけでよい
+- コンテナは uid 1000（`node` ユーザー）で動く。`./data` は uid 1000 が書き込めるようにしておく（ホストのユーザーが uid 1000 でない場合は `sudo chown -R 1000:1000 data`）
+- イメージは動かすマシンでビルドされる（better-sqlite3 のネイティブモジュールのため。x64 / arm64 の Linux に対応）
+- 再起動ポリシーは `unless-stopped`（サーバーの再起動後も自動で起動する）
+- **認証機能はないため、インターネットには公開せず LAN 内だけで使うこと**
+
+| 設定（`.env`）         | 既定値                                           | 説明                                                         |
+| ---------------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| `WEB_PORT`             | `3000`                                           | 公開するポート                                               |
+| `NEXT_PUBLIC_TILE_URL` | `https://tile.openstreetmap.org/{z}/{x}/{y}.png` | 地図タイルの URL（ビルド時に埋め込まれる。変更したら `--build`） |
+
+### Docker を使わない場合
 
 ```bash
 cd web
@@ -57,10 +84,8 @@ DATA_DIR=/var/lib/m5-gps PORT=3000 HOSTNAME=0.0.0.0 npm run start:standalone
 ```
 
 - **`DATA_DIR` は必ず `web/` の外の絶対パスを指定する**（既定の `./data` は起動ディレクトリからの相対パスで、standalone では `.next/standalone/data` になり、再ビルドで消える）
-- データ（SQLite・アップロードした CSV・変換済み GeoJSON）はすべて `DATA_DIR` に保存される。バックアップはこのディレクトリをコピーするだけでよい
 - better-sqlite3 はネイティブモジュールのため、**動かすマシン（CPU アーキテクチャ）と同じ環境でビルドする**（例: Raspberry Pi で動かすなら Raspberry Pi 上で `npm run build`）
-- 常駐化は systemd や Docker Compose などで行う（Docker の場合は `DATA_DIR` をボリュームにする）
-- **認証機能はないため、インターネットには公開せず LAN 内だけで使うこと**
+- 常駐化は systemd などで行う
 
 | 環境変数               | 既定値                                           | 説明                                           |
 | ---------------------- | ------------------------------------------------ | ---------------------------------------------- |

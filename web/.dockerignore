@@ -1,0 +1,11 @@
+# データ・秘密情報・ビルド成果物はイメージに入れない
+node_modules
+.next
+data
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+coverage
+Dockerfile
+.dockerignore
