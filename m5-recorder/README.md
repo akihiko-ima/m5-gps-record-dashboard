@@ -63,7 +63,7 @@ arduino-cli upload  --fqbn m5stack:esp32:m5stack_core -p /dev/ttyACM0 m5-recorde
 
 ```csv
 timestamp,latitude,longitude,altitude_m,speed_kmh,satellites,hdop
-2026-10-11T01:23:40Z,35.681236,139.767125,12.3,42.5,9,0.9
+2026-10-11T01:23:40Z,35.658636,139.745407,12.3,42.5,9,0.9
 2026-10-11T01:24:00Z,,,,,,
 ```
 

@@ -13,5 +13,9 @@ node_modules/
 
 # patch files
 *.patch
+
 # m5-recorder host unit test build output
 m5-recorder/test/build/
+
+# web dashboard data (SQLite / uploaded CSV / converted GeoJSON)
+data/

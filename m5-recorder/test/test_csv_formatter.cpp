@@ -6,8 +6,8 @@ namespace {
 GpsSample fixedSample() {
   GpsSample s;
   s.hasFix = true;
-  s.latitude = 35.681236;
-  s.longitude = 139.767125;
+  s.latitude = 35.658636;
+  s.longitude = 139.745407;
   s.altitudeValid = true;
   s.altitudeM = 12.34;
   s.speedValid = true;
@@ -29,7 +29,7 @@ TEST(csv_header_matches_spec) {
 }
 
 TEST(csv_row_with_fix) {
-  EXPECT_EQ(std::string("2026-10-11T01:23:40Z,35.681236,139.767125,12.3,42.5,9,"
+  EXPECT_EQ(std::string("2026-10-11T01:23:40Z,35.658636,139.745407,12.3,42.5,9,"
                         "0.9\n"),
             csv::row(1791681820, fixedSample()));
 }
@@ -45,7 +45,7 @@ TEST(csv_row_with_fix_leaves_invalid_fields_blank) {
   GpsSample s = fixedSample();
   s.altitudeValid = false;
   s.hdopValid = false;
-  EXPECT_EQ(std::string("2026-10-11T01:23:40Z,35.681236,139.767125,,42.5,9,\n"),
+  EXPECT_EQ(std::string("2026-10-11T01:23:40Z,35.658636,139.745407,,42.5,9,\n"),
             csv::row(1791681820, s));
 }
 
