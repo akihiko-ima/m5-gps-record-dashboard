@@ -23,3 +23,17 @@ export class TrackError extends Error {
 export function isTrackError(e: unknown): e is TrackError {
   return e instanceof Error && e.name === "TrackError" && typeof (e as Partial<TrackError>).code === "string";
 }
+
+/** API の応答に使う HTTP ステータス */
+export function toHttpStatus(code: TrackErrorCode): number {
+  switch (code) {
+    case "DUPLICATE":
+      return 409;
+    case "NOT_FOUND":
+      return 404;
+    case "TOO_LARGE":
+      return 413;
+    default:
+      return 400;
+  }
+}

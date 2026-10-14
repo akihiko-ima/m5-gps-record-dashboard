@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "android-gps-recorder",
+    "name": "GPS レコーダー",
     "slug": "android-gps-recorder",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,11 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.androidgpsrecorder"
+      "package": "com.anonymous.androidgpsrecorder",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ]
     },
     "web": {
       "output": "static",
@@ -34,7 +38,24 @@
           "imageWidth": 76
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "走行の記録中に位置情報を取得します",
+          "locationAlwaysAndWhenInUsePermission": "画面オフの間も走行を記録するため、位置情報を常に取得します",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

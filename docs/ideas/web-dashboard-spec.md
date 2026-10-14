@@ -380,7 +380,13 @@ web/
 | Server Action | `deleteTrack(id)`               | トラックを削除する                            |
 | Server Component | `/` ページ                   | DB から一覧を取得して描画                     |
 | Route Handler | `GET /api/tracks/{id}/geojson`  | 変換済み GeoJSON を返す（地図コンポーネントから取得） |
+| Route Handler | `POST /api/tracks`              | Android レコーダーからのアップロード（下記）   |
 
+- `POST /api/tracks`（Android レコーダー用。`docs/ideas/android-gps-recorder-spec.md` A7）
+  - 本文: `multipart/form-data`（`file`: CSV、`activityType`: `motorcycle` / `bicycle`）
+  - 検証・変換・保存は `uploadTrack` と同じ（フォームの検証は `server/upload-form.ts` で共通化）
+  - 応答: 成功は `201` + 登録したトラックの概要。失敗は `{ code, message }`（重複 `409`、サイズ超過 `413`、その他の入力エラー `400`、想定外のエラー `500`）
+  - 認証はしない（LAN 内での利用が前提）。ブラウザからは呼ばないため CORS の設定もしない
 - 地図（Leaflet）はブラウザ専用のため、Client Component として `dynamic(..., { ssr: false })` で読み込む
 - アップロードの本体サイズ上限（Server Action の `experimental.serverActions.bodySizeLimit`）は 11MB とする（CSV の上限 10MB + multipart のオーバーヘッド。10MB の判定はアプリ側で行う）
 - Cache Components が有効なため、DB（同期 API の better-sqlite3）を読むページの部分は `<Suspense>` で囲み、`connection()` でリクエスト時に読むことを明示する

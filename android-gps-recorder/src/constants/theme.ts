@@ -63,3 +63,13 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+/** 状態・操作の色（ライト / ダークで共通） */
+export const Palette = {
+  primary: '#208AEF',
+  danger: '#E5484D',
+  success: '#30A46C',
+  warning: '#F5A524',
+  neutral: '#8B8D98',
+  onColor: '#ffffff',
+} as const;

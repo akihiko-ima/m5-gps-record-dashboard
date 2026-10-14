@@ -6,6 +6,12 @@
 - M5Stack用GPSユニット v1.1
 - MicroSD 16GB
 
+## Android GPS レコーダー
+
+M5 の代わりに Android スマートフォンで記録するアプリ（`android-gps-recorder/`、Expo + React Native）。
+M5 版と同じ形式の CSV を 10 秒ごとに記録し、共有メニューで書き出すか、自宅 LAN 内の Web ダッシュボードへ直接アップロードできる。
+M5 版と並行して使える。使い方・開発手順は [android-gps-recorder/README.md](android-gps-recorder/README.md) を参照。
+
 ## Web ダッシュボード
 
 M5 で記録した CSV をブラウザからアップロードし、地図上に走行軌跡を表示・再生する Web アプリ（`web/`）。
@@ -16,6 +22,7 @@ M5 で記録した CSV をブラウザからアップロードし、地図上に
 ### 使い方
 
 1. M5 の microSD から CSV（`/tracks/YYYYMMDD_HHMMSS.csv`）を PC に取り出す
+   - Android レコーダーの CSV は、アプリから直接アップロードすることもできる（`POST /api/tracks`）
 2. 「CSV アップロード」から走行種別（バイク / 自転車）を選んで CSV をアップロードする（複数ファイル可）
 
    ![アップロードダイアログ](docs/images/upload-dialog.png)
@@ -56,12 +63,12 @@ cp .env.example .env    # 任意: ポートやタイル URL を変える場合
 docker compose up -d    # http://<サーバー>:3000
 ```
 
-| 操作                         | コマンド                               |
-| ---------------------------- | -------------------------------------- |
-| 状態の確認（healthy になる） | `docker compose ps`                    |
-| ログの確認                   | `docker compose logs -f web`           |
-| 更新（git pull の後など）    | `docker compose up -d --build`         |
-| 停止                         | `docker compose down`                  |
+| 操作                         | コマンド                       |
+| ---------------------------- | ------------------------------ |
+| 状態の確認（healthy になる） | `docker compose ps`            |
+| ログの確認                   | `docker compose logs -f web`   |
+| 更新（git pull の後など）    | `docker compose up -d --build` |
+| 停止                         | `docker compose down`          |
 
 - データ（SQLite・アップロードした CSV・変換済み GeoJSON）はリポジトリ直下の `./data` に保存される（Git 管理外）。コンテナを作り直しても消えず、バックアップはこのディレクトリをコピーするだけでよい
 - コンテナは uid 1000（`node` ユーザー）で動く。`./data` は uid 1000 が書き込めるようにしておく（ホストのユーザーが uid 1000 でない場合は `sudo chown -R 1000:1000 data`）
@@ -69,9 +76,9 @@ docker compose up -d    # http://<サーバー>:3000
 - 再起動ポリシーは `unless-stopped`（サーバーの再起動後も自動で起動する）
 - **認証機能はないため、インターネットには公開せず LAN 内だけで使うこと**
 
-| 設定（`.env`）         | 既定値                                           | 説明                                                         |
-| ---------------------- | ------------------------------------------------ | ------------------------------------------------------------ |
-| `WEB_PORT`             | `3000`                                           | 公開するポート                                               |
+| 設定（`.env`）         | 既定値                                           | 説明                                                             |
+| ---------------------- | ------------------------------------------------ | ---------------------------------------------------------------- |
+| `WEB_PORT`             | `3000`                                           | 公開するポート                                                   |
 | `NEXT_PUBLIC_TILE_URL` | `https://tile.openstreetmap.org/{z}/{x}/{y}.png` | 地図タイルの URL（ビルド時に埋め込まれる。変更したら `--build`） |
 
 ### Docker を使わない場合

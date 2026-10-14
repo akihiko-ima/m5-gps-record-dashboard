@@ -13,19 +13,18 @@ export default function AppTabs() {
       indicatorColor={colors.backgroundElement}
       labelStyle={{ selected: { color: colors.text } }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
+        <NativeTabs.Trigger.Label>記録</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon md="my_location" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
+      <NativeTabs.Trigger name="tracks">
+        <NativeTabs.Trigger.Label>ファイル</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon md="folder" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="settings">
+        <NativeTabs.Trigger.Label>設定</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon md="settings" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

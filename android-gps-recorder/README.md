@@ -1,56 +1,77 @@
-# Welcome to your Expo app 👋
+# Android GPS レコーダー
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+M5 GPS レコーダーと同じ形式の走行ログ（CSV）を Android スマートフォンで記録するアプリ（Expo + React Native）。
+記録した CSV は、共有メニューで書き出すか、自宅 LAN 内の Web ダッシュボード（`../web/`）へ直接アップロードできる。
+仕様は [docs/ideas/android-gps-recorder-spec.md](../docs/ideas/android-gps-recorder-spec.md) を参照。
 
-## Get started
+## 機能
 
-1. Install dependencies
+| タブ     | できること                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------- |
+| 記録     | 記録の開始・終了。GPS の測位状態・精度・緯度経度、記録中は件数と経過時間を表示                 |
+| ファイル | 保存済み CSV の一覧（新しい順）、アップロード状態のバッジ、書き出し・アップロード・削除         |
+| 設定     | アップロード先 URL（Web ダッシュボードのアドレス）の確認・変更                                 |
 
-   ```bash
-   npm install
-   ```
+- 10 秒ごとに 1 行を記録する。画面オフ・バックグラウンドでも記録を続け、記録中は通知が常に表示される
+- 位置が取れない時刻は timestamp だけの行（未測位）になる。`satellites` / `hdop` は Android では取得できないため常に空欄
+- ファイルはアプリ専用の領域の `tracks/YYYYMMDD_HHMMSS.csv`（記録開始時刻、UTC）に保存される
+- 記録中にアプリを終了（タスク一覧から消すなど）すると記録は止まる。次にアプリを開くと、再開するか終了するかを選べる
+- メーカー独自の省電力機能で記録が止まる場合は、端末の設定でこのアプリを電池の最適化の対象外にする（アプリ側では対策していない）
 
-2. Start the app
+## 初回の権限
 
-   ```bash
-   npx expo start
-   ```
+記録開始を押すと、次の順に権限を求める。
 
-In the output, you'll find options to open the app in a
+1. 位置情報「アプリの使用中のみ許可」
+2. 位置情報「常に許可」（Android 11 以降は設定画面が開くので「常に許可」を選ぶ）
+3. 通知（Android 13 以降。記録中の通知の表示に使う）
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+「常に許可」にしないと記録は開始できない。
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Web ダッシュボードへのアップロード
 
-## Get a fresh project
+1. 自宅サーバーで Web ダッシュボードを起動しておく（ルートの [README](../README.md) を参照）
+2. スマートフォンをサーバーと同じ Wi-Fi に接続する
+3. 「ファイル」タブで「アップロード」を押し、走行種別とアップロード先 URL（例: `http://192.168.1.10:3000`）を入力して送信する
+   - 成功すると URL が保存され、次回からは入力済みになる（「設定」タブでも変更できる）
+   - バッジ: 未アップロード（灰）/ アップロード済み（緑）/ 失敗（赤）
+   - 同じ内容のファイルがすでに登録されている場合も「アップロード済み」になる
 
-When you're ready, run:
+自宅 LAN の HTTP サーバーへ送るため、アプリは平文の HTTP 通信を許可している（`app.json` の `expo-build-properties` の `usesCleartextTraffic`）。
+**アップロード API（`POST /api/tracks`）には認証がないため、Web ダッシュボードをインターネットに公開しないこと。**
+
+## 開発
+
+バックグラウンドでの位置取得と常駐通知は Expo Go では動かないため、開発ビルドを使う。
 
 ```bash
-npm run reset-project
+cd android-gps-recorder
+npm install
+npx expo run:android   # 開発ビルドを作って、USB 接続した端末（またはエミュレーター）にインストールして起動
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2 回目以降は `npx expo start` で開発サーバーだけ起動すればよい（ネイティブの設定やライブラリを変えたときは `npx expo run:android` をやり直す）。
 
-### Other setup steps
+| コマンド            | 内容                                         |
+| ------------------- | -------------------------------------------- |
+| `npm test`          | ユニットテスト（jest-expo）                  |
+| `npm run lint`      | lint                                         |
+| `npm run typecheck` | 型チェック                                   |
+| `npx expo-doctor`   | 依存関係・設定の診断                         |
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- 依存の追加は `npx expo install <package>` で行う（SDK 57 に合うバージョンが入る）
+- `android/` は `app.json` から生成される（Git 管理外）。手で編集しない
 
-## Learn more
+### ディレクトリ構成
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+src/
+├── app/          # 画面（Expo Router のタブ: index = 記録、tracks = ファイル、settings = 設定）
+├── components/   # 画面部品（ボタン、一覧の行、アップロードダイアログなど）
+├── hooks/        # 画面の状態（use-recorder, use-track-files）
+├── lib/          # 純粋関数（CSV の整形、10 秒ごとの行の生成、URL の検証、表示の整形）+ テスト
+└── services/     # 位置情報・ファイル・AsyncStorage・アップロード・共有
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+10 秒ごとの行は、OS から位置を受け取ったときに「前回の行から今までの 10 秒ごとの時刻」をまとめて埋めて作る（`lib/slots.ts`）。
+バックグラウンドではタイマーが止まるため、タイマーは使っていない。

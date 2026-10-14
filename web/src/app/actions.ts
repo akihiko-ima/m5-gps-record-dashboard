@@ -4,7 +4,8 @@ import { refresh } from "next/cache";
 
 import { isTrackError, type TrackErrorCode } from "@/lib/errors";
 import type { TrackSummary } from "@/lib/track/types";
-import { getTrackService, MAX_CSV_BYTES } from "@/server/track-service";
+import { getTrackService, type ImportTrackInput } from "@/server/track-service";
+import { readUploadForm } from "@/server/upload-form";
 
 export type ActionResult<T> =
   | { ok: true; data: T }
@@ -23,17 +24,14 @@ function run<T>(fn: () => T): ActionResult<T> {
 }
 
 export async function uploadTrack(formData: FormData): Promise<ActionResult<TrackSummary>> {
-  const file = formData.get("file");
-  if (!(file instanceof File) || !file.name.toLowerCase().endsWith(".csv")) {
-    return { ok: false, code: "INVALID_FORMAT", message: "CSV ファイル（.csv）を選択してください" };
+  let input: ImportTrackInput;
+  try {
+    input = await readUploadForm(formData);
+  } catch (e) {
+    if (isTrackError(e)) return { ok: false, code: e.code, message: e.message };
+    throw e;
   }
-  if (file.size > MAX_CSV_BYTES) {
-    return { ok: false, code: "TOO_LARGE", message: "ファイルサイズが 10MB を超えています" };
-  }
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  return run(() =>
-    getTrackService().importTrack({ fileName: file.name, bytes, activityType: formData.get("activityType") }),
-  );
+  return run(() => getTrackService().importTrack(input));
 }
 
 export async function updateActivityType(id: string, activityType: string): Promise<ActionResult<TrackSummary>> {
