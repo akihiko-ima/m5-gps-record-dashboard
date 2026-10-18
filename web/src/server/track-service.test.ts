@@ -78,6 +78,21 @@ describe("track-service", () => {
     expectCode(() => service.getTrackGeoJson(older.id), "NOT_FOUND");
   });
 
+  it("ランニングで登録でき、ほかの種別と相互に変更できる", () => {
+    const track = service.importTrack({ fileName: "run.csv", bytes: csvBytes(1), activityType: "running" });
+    expect(track.activityType).toBe("running");
+    expect(service.getTrack(track.id)?.activityType).toBe("running");
+
+    expect(service.updateActivityType(track.id, "motorcycle").activityType).toBe("motorcycle");
+    expect(service.updateActivityType(track.id, "running").activityType).toBe("running");
+  });
+
+  it("不正な種別のメッセージに全種別の名前が入る", () => {
+    expect(() => service.importTrack({ fileName: "a.csv", bytes: csvBytes(1), activityType: "car" })).toThrowError(
+      "走行種別はバイク・自転車・ランニングのいずれかを選択してください",
+    );
+  });
+
   it("同じ内容は重複として拒否する", () => {
     service.importTrack({ fileName: "a.csv", bytes: csvBytes(1), activityType: "motorcycle" });
     expectCode(() => service.importTrack({ fileName: "copy.csv", bytes: csvBytes(1), activityType: "bicycle" }), "DUPLICATE");

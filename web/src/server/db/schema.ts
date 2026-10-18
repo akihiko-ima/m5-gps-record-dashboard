@@ -23,7 +23,11 @@ export const tracks = sqliteTable(
   },
   (table) => [
     index("tracks_started_at_idx").on(table.startedAt),
-    check("tracks_activity_type_check", sql`${table.activityType} IN ('motorcycle', 'bicycle')`),
+    // 種別の一覧は ACTIVITY_TYPES から生成する（コード内の定数のみで、外部入力は入らない）
+    check(
+      "tracks_activity_type_check",
+      sql`${table.activityType} IN (${sql.raw(ACTIVITY_TYPES.map((t) => `'${t}'`).join(", "))})`,
+    ),
   ],
 );
 

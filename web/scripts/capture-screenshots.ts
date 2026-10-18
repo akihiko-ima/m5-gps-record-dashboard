@@ -19,10 +19,11 @@ const serverJs = path.join(webDir, ".next/standalone/server.js");
 const port = Number(process.env.SCREENSHOT_PORT ?? 3300);
 const baseUrl = `http://127.0.0.1:${port}`;
 
-const DEMO_TYPES: Record<string, "バイク" | "自転車"> = {
+const DEMO_TYPES: Record<string, "バイク" | "自転車" | "ランニング"> = {
   "20260920_001230.csv": "バイク",
   "20260927_220510.csv": "自転車",
   "20261004_013000.csv": "自転車",
+  "20261011_214000.csv": "ランニング",
 };
 
 async function waitForServer() {
@@ -116,8 +117,8 @@ async function main() {
     await waitForMap(page);
     await page.screenshot({ path: path.join(outDir, "playback.png") });
 
-    // スマートフォン幅（自転車のトラック）
-    const trackUrl = await page.getByRole("link", { name: /自転車/ }).last().getAttribute("href");
+    // スマートフォン幅（ランニングのトラック）
+    const trackUrl = await page.getByRole("link", { name: /ランニング/ }).getAttribute("href");
     const mobile = await browser.newContext({
       viewport: { width: 390, height: 844 },
       deviceScaleFactor: 2,

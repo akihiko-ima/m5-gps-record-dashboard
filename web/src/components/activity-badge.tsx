@@ -1,4 +1,4 @@
-import { BikeIcon, MotorbikeIcon, type LucideIcon } from "lucide-react";
+import { BikeIcon, FootprintsIcon, MotorbikeIcon, type LucideIcon } from "lucide-react";
 
 import { ACTIVITY_TYPE_META, type ActivityType } from "@/lib/activity-type";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 const ICONS: Record<ActivityType, LucideIcon> = {
   motorcycle: MotorbikeIcon,
   bicycle: BikeIcon,
+  running: FootprintsIcon,
 };
 
 export function ActivityIcon({ type, className }: { type: ActivityType; className?: string }) {

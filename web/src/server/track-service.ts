@@ -4,7 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 
 import { desc, eq } from "drizzle-orm";
 
-import { isActivityType, type ActivityType } from "@/lib/activity-type";
+import { ACTIVITY_TYPE_META, ACTIVITY_TYPES, isActivityType, type ActivityType } from "@/lib/activity-type";
 import { TrackError } from "@/lib/errors";
 import { convertTrack } from "@/lib/track/convert";
 import { parseTrackCsv } from "@/lib/track/csv";
@@ -38,9 +38,11 @@ function toSummary(row: TrackRow): TrackSummary {
   };
 }
 
+const ACTIVITY_TYPE_LABELS = ACTIVITY_TYPES.map((t) => ACTIVITY_TYPE_META[t].label).join("・");
+
 function assertActivityType(value: unknown): asserts value is ActivityType {
   if (!isActivityType(value)) {
-    throw new TrackError("INVALID_ACTIVITY_TYPE", "走行種別はバイクか自転車を選択してください");
+    throw new TrackError("INVALID_ACTIVITY_TYPE", `走行種別は${ACTIVITY_TYPE_LABELS}のいずれかを選択してください`);
   }
 }
 

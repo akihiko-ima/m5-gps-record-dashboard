@@ -85,6 +85,12 @@ describe("handleUploadRequest", () => {
     expect(await invalidType.json()).toMatchObject({ code: "INVALID_ACTIVITY_TYPE" });
   });
 
+  it("Android からの running も登録できる", async () => {
+    const res = await handleUploadRequest(post(form(csvFile(), "running")), service);
+    expect(res.status).toBe(201);
+    expect(await res.json()).toMatchObject({ activityType: "running" });
+  });
+
   it("multipart でない本文は 400", async () => {
     const res = await handleUploadRequest(post("not a form"), service);
     expect(res.status).toBe(400);

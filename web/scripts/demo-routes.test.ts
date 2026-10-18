@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { ACTIVITY_TYPES } from "../src/lib/activity-type";
 import { convertTrack } from "../src/lib/track/convert";
 import { parseTrackCsv } from "../src/lib/track/csv";
 
@@ -19,8 +20,8 @@ const realBboxes = existsSync(sampleDir)
 const demos = generateDemoCsvs();
 
 describe("ダミー CSV", () => {
-  it("バイクと自転車の両方があり、未測位の行を含む", () => {
-    expect(new Set(demos.map((d) => d.activityType))).toEqual(new Set(["motorcycle", "bicycle"]));
+  it("すべての走行種別があり、未測位の行を含む", () => {
+    expect(new Set(demos.map((d) => d.activityType))).toEqual(new Set(ACTIVITY_TYPES));
     expect(demos.some((d) => d.csv.includes(",,,,,,"))).toBe(true);
   });
 

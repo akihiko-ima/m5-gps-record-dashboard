@@ -1,4 +1,4 @@
-export const ACTIVITY_TYPES = ["motorcycle", "bicycle"] as const;
+export const ACTIVITY_TYPES = ["motorcycle", "bicycle", "running"] as const;
 
 export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 
@@ -6,6 +6,7 @@ export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 export const ACTIVITY_TYPE_META: Record<ActivityType, { label: string; color: string }> = {
   motorcycle: { label: "バイク", color: "#F97316" }, // orange-500
   bicycle: { label: "自転車", color: "#3B82F6" }, // blue-500
+  running: { label: "ランニング", color: "#22C55E" }, // green-500
 };
 
 export function isActivityType(value: unknown): value is ActivityType {
