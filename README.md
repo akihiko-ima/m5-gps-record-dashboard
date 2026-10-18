@@ -70,8 +70,15 @@ docker compose up -d    # http://<サーバー>:3000
 | 更新（git pull の後など）    | `docker compose up -d --build` |
 | 停止                         | `docker compose down`          |
 
-- データ（SQLite・アップロードした CSV・変換済み GeoJSON）はリポジトリ直下の `./data` に保存される（Git 管理外）。コンテナを作り直しても消えず、バックアップはこのディレクトリをコピーするだけでよい
-- コンテナは uid 1000（`node` ユーザー）で動く。`./data` は uid 1000 が書き込めるようにしておく（ホストのユーザーが uid 1000 でない場合は `sudo chown -R 1000:1000 data`）
+- データ（SQLite・アップロードした CSV・変換済み GeoJSON）は Docker の名前付きボリューム `m5-gps-dashboard-data` に保存される。コンテナを作り直しても消えない（`docker compose down -v` やボリュームを削除すると消える）
+- ボリュームは初回起動時に自動で作られ、所有者もコンテナの `node` ユーザーになるため、ホスト側での権限設定（`chown`）は不要
+
+| 操作                                   | コマンド                                                                                                  |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| バックアップ（`./backup` に書き出し）  | `docker compose stop web && docker compose cp web:/data ./backup && docker compose start web`             |
+| 復元 / 旧 `./data` からの移行          | `docker compose run --rm --no-deps -v ./backup:/restore:ro web sh -c 'cp -r /restore/. /data/'`           |
+
+- 復元・移行はコンテナの `node` ユーザーでコピーするため、所有者の調整は不要。以前のバージョン（ホストの `./data` をマウント）から移行する場合は `./backup` を `./data` に読み替えて実行する
 - イメージは動かすマシンでビルドされる（better-sqlite3 のネイティブモジュールのため。x64 / arm64 の Linux に対応）
 - 再起動ポリシーは `unless-stopped`（サーバーの再起動後も自動で起動する）
 - **認証機能はないため、インターネットには公開せず LAN 内だけで使うこと**

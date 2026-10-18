@@ -394,7 +394,7 @@ web/
 ## 9. 非機能要件
 
 - **運用**: 自宅サーバー上で `next build`（`output: "standalone"`）した成果物を Node.js で起動する
-  - 常駐化は Docker Compose（リポジトリ直下の `compose.yaml`、`docker compose up -d`）を標準とする。データはホストの `./data` をマウントする。Docker を使わない場合は systemd などで常駐させる
+  - 常駐化は Docker Compose（リポジトリ直下の `compose.yaml`、`docker compose up -d`）を標準とする。データは名前付きボリューム（`m5-gps-dashboard-data`）に保存する。Docker を使わない場合は systemd などで常駐させる
 - **バックアップ**: `data/` ディレクトリをコピーするだけでバックアップできること
 - **性能**: サンプル規模（約 2,000 点）のトラックを選択してから 1 秒以内に地図へ表示できること
   - 再生中もマーカーの移動がカクつかないこと（再生処理は `requestAnimationFrame` で行い、軌跡全体の再描画は避ける）
