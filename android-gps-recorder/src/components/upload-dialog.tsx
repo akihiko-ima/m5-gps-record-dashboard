@@ -79,7 +79,7 @@ function UploadForm({ fileName, sending, setSending, onCancel, onSubmit }: FormP
 
         <ThemedText type="smallBold">走行種別（必須）</ThemedText>
         <View style={styles.types}>
-          {ACTIVITY_TYPES.map(({ value, label }) => {
+          {ACTIVITY_TYPES.map(({ value, icon, label }) => {
             const selected = activityType === value;
             return (
               <Pressable
@@ -92,6 +92,8 @@ function UploadForm({ fileName, sending, setSending, onCancel, onSubmit }: FormP
                   { borderColor: selected ? Palette.primary : theme.backgroundSelected },
                   selected && { backgroundColor: theme.backgroundSelected },
                 ]}>
+                {/* 3 択だと 1 行では「ランニング」が折り返すため、絵文字とラベルを 2 行に分ける */}
+                <ThemedText style={styles.typeIcon}>{icon}</ThemedText>
                 <ThemedText type="smallBold">{label}</ThemedText>
               </Pressable>
             );
@@ -133,6 +135,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 18 },
   types: { flexDirection: 'row', gap: Spacing.two },
   type: { flex: 1, alignItems: 'center', borderWidth: 2, borderRadius: 12, paddingVertical: Spacing.three },
+  typeIcon: { fontSize: 24, lineHeight: 32 },
   input: {
     borderWidth: 1,
     borderRadius: 8,

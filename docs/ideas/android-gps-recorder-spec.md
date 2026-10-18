@@ -140,7 +140,7 @@ M5 GPS レコーダー（`docs/ideas/m5-recorder-spec.md`）と同じ役割を A
 
 ### A7: Web ダッシュボードへの直接アップロード（LAN 内）
 
-- 一覧の「アップロード」を押すと、走行種別（バイク / 自転車）を選ぶダイアログを表示する
+- 一覧の「アップロード」を押すと、走行種別（バイク / 自転車 / ランニング）を選ぶダイアログを表示する
   - 走行種別は必須（Web 側の仕様に合わせる）
 - 選んだ種別と CSV を Web ダッシュボードの API に送信する
 - 結果をトーストなどで通知する
@@ -176,7 +176,7 @@ M5 GPS レコーダー（`docs/ideas/m5-recorder-spec.md`）と同じ役割を A
 
 - `POST /api/tracks`（`multipart/form-data`）
   - `file`: CSV ファイル
-  - `activityType`: `motorcycle` / `bicycle`
+  - `activityType`: `motorcycle` / `bicycle` / `running`
 - 検証・変換・保存は既存の `uploadTrack` と同じ処理（`track-service`）を使う
 - レスポンス: 成功時 `201` と登録したトラックの概要。失敗時はエラーコード（`TrackErrorCode`）とメッセージを返す（重複は `409`、サイズ超過は `413`、それ以外の入力エラーは `400`）
 - 認証は行わない（Web 側と同じく自宅 LAN 内での利用を前提とする）

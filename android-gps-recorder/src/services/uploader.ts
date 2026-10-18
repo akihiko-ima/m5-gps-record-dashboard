@@ -4,11 +4,12 @@ import { uploadEndpoint } from '@/lib/url';
 
 import { trackFile } from './track-files';
 
-export type ActivityType = 'motorcycle' | 'bicycle';
+export type ActivityType = 'motorcycle' | 'bicycle' | 'running';
 
-export const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
-  { value: 'motorcycle', label: '🏍 バイク' },
-  { value: 'bicycle', label: '🚲 自転車' },
+export const ACTIVITY_TYPES: { value: ActivityType; icon: string; label: string }[] = [
+  { value: 'motorcycle', icon: '🏍', label: 'バイク' },
+  { value: 'bicycle', icon: '🚲', label: '自転車' },
+  { value: 'running', icon: '🏃', label: 'ランニング' },
 ];
 
 export type UploadResult = { ok: true; duplicate: boolean } | { ok: false; message: string };
