@@ -61,6 +61,8 @@ function PlaybackView({ timeline, color }: { timeline: Timeline; color: string }
     let last = performance.now();
     const tick = (now: number) => {
       const next = Math.min(currentMsRef.current + (now - last) * speed, timeline.endMs);
+      // last は effect 内のローカル変数で描画に影響しないため誤検知
+      // oxlint-disable-next-line react/immutability
       last = now;
       currentMsRef.current = next;
       if (next >= timeline.endMs) {

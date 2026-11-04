@@ -15,7 +15,7 @@ Next.js 16（App Router / Cache Components）・TypeScript・Tailwind CSS 4・sh
 | `npm run build`            | 本番ビルド（`.next/standalone` に public・static もコピー）  |
 | `npm run start:standalone` | 本番ビルドを起動                                             |
 | `npm test`                 | ユニットテスト・統合テスト（Vitest）                         |
-| `npm run lint`             | ESLint                                                       |
+| `npm run lint`             | OXLint                                                       |
 | `npm run typecheck`        | 型チェック（ルートの型を生成してから `tsc`）                 |
 | `npm run db:generate`      | `src/server/db/schema.ts` の変更からマイグレーションを生成   |
 | `npm run demo:generate`    | ダミー CSV を `demo/` に生成                                 |
